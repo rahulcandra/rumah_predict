@@ -18,8 +18,8 @@
               <img src="{{ url_for('static', filename='img/logo_rumah.png') }}" alt="Veltrix Logo" class="vx-auth-logo" style="max-height: 48px;" />
               <img src="{{ url_for('static', filename='img/logo_rumah_2.png') }}" alt="Veltrix Name" style="max-height: 20px;" />
             </a>
-            <h1 class="h5 vx-auth-title mt-2">Welcome Back</h1>
-            <p class="text-muted small">Sign in to your model deployment control panel</p>
+            <h1 class="h5 vx-auth-title mt-2">Selamat Datang Kembali!</h1>
+            <p class="text-muted small">Silahkan masuk ke kontrol panel model Anda</p>
           </div>
 
           <!-- Login form -->
@@ -27,7 +27,7 @@
 
             <!-- Email -->
             <div class="mb-3">
-              <label for="email" class="form-label vx-form-label">Email address</label>
+              <label for="email" class="form-label vx-form-label">Email</label>
               <div class="input-group vx-input-group">
                 <span class="input-group-text vx-input-icon">
                   <i class="bi bi-envelope"></i>
@@ -47,7 +47,7 @@
             <!-- Password -->
             <div class="mb-3">
               <div class="d-flex justify-content-between align-items-center">
-                <label for="password" class="form-label vx-form-label mb-0">Password</label>
+                <label for="password" class="form-label vx-form-label mb-0">Kata Sandi</label>
               </div>
               <div class="input-group vx-input-group mt-1">
                 <span class="input-group-text vx-input-icon">
@@ -82,21 +82,21 @@
                 name="remember"
               />
               <label class="form-check-label small text-muted mb-0" for="remember">
-                Keep me signed in
+                Simpan kata sandi
               </label>
             </div>
 
             <!-- Submit -->
             <button type="submit" class="btn vx-btn-primary w-100 py-2" id="loginBtn">
-              <i class="bi bi-box-arrow-in-right me-2"></i>Sign In to Dashboard
+              <i class="bi bi-box-arrow-in-right me-2"></i>Masuk ke Dashboard
             </button>
 
           </form><!-- /form -->
 
           <!-- Footer -->
           <p class="text-center text-muted small mt-4 mb-0">
-            Need a deployment account?
-            <a href="{{ url_for('auth.register') }}" class="vx-link">Create one</a>
+            Tidak punya akun?
+            <a href="{{ url_for('auth.register') }}" class="vx-link">Buat Sekarang</a>
           </p>
 
         </div><!-- /vx-auth-card -->
