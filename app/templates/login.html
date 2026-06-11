@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block title %}Login{% endblock %}
+{% block meta_description %}Sign in to your Veltrix developer account to manage model deployments.{% endblock %}
+
+{% block content %}
+<section class="vx-auth-section d-flex align-items-center py-5">
+  <div class="container position-relative z-1">
+    <div class="row justify-content-center">
+      <div class="col-sm-10 col-md-8 col-lg-5 col-xl-4">
+
+        <!-- Card -->
+        <div class="vx-auth-card vx-animate-fade-in-up">
+
+          <!-- Header -->
+          <div class="vx-auth-card-header text-center mb-4">
+            <a href="{{ url_for('main.landing') }}" class="d-inline-flex flex-column align-items-center gap-2 mb-3">
+              <img src="{{ url_for('static', filename='img/logo_rumah.png') }}" alt="Veltrix Logo" class="vx-auth-logo" style="max-height: 48px;" />
+              <img src="{{ url_for('static', filename='img/logo_rumah_2.png') }}" alt="Veltrix Name" style="max-height: 20px;" />
+            </a>
+            <h1 class="h5 vx-auth-title mt-2">Welcome Back</h1>
+            <p class="text-muted small">Sign in to your model deployment control panel</p>
+          </div>
+
+          <!-- Login form -->
+          <form method="POST" action="{{ url_for('auth.login') }}" novalidate id="loginForm">
+
+            <!-- Email -->
+            <div class="mb-3">
+              <label for="email" class="form-label vx-form-label">Email address</label>
+              <div class="input-group vx-input-group">
+                <span class="input-group-text vx-input-icon">
+                  <i class="bi bi-envelope"></i>
+                </span>
+                <input
+                  type="email"
+                  class="form-control vx-input"
+                  id="email"
+                  name="email"
+                  placeholder="developer@example.com"
+                  autocomplete="email"
+                  required
+                />
+              </div>
+            </div>
+
+            <!-- Password -->
+            <div class="mb-3">
+              <div class="d-flex justify-content-between align-items-center">
+                <label for="password" class="form-label vx-form-label mb-0">Password</label>
+              </div>
+              <div class="input-group vx-input-group mt-1">
+                <span class="input-group-text vx-input-icon">
+                  <i class="bi bi-lock"></i>
+                </span>
+                <input
+                  type="password"
+                  class="form-control vx-input"
+                  id="password"
+                  name="password"
+                  placeholder="••••••••"
+                  autocomplete="current-password"
+                  required
+                />
+                <button
+                  class="btn vx-input-icon vx-toggle-pw"
+                  type="button"
+                  id="togglePassword"
+                  title="Show / hide password"
+                >
+                  <i class="bi bi-eye" id="togglePasswordIcon"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Remember me -->
+            <div class="mb-4 d-flex align-items-center">
+              <input
+                class="form-check-input vx-checkbox me-2"
+                type="checkbox"
+                id="remember"
+                name="remember"
+              />
+              <label class="form-check-label small text-muted mb-0" for="remember">
+                Keep me signed in
+              </label>
+            </div>
+
+            <!-- Submit -->
+            <button type="submit" class="btn vx-btn-primary w-100 py-2" id="loginBtn">
+              <i class="bi bi-box-arrow-in-right me-2"></i>Sign In to Dashboard
+            </button>
+
+          </form><!-- /form -->
+
+          <!-- Footer -->
+          <p class="text-center text-muted small mt-4 mb-0">
+            Need a deployment account?
+            <a href="{{ url_for('auth.register') }}" class="vx-link">Create one</a>
+          </p>
+
+        </div><!-- /vx-auth-card -->
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  // Toggle password visibility
+  const toggleBtn  = document.getElementById("togglePassword");
+  const pwInput    = document.getElementById("password");
+  const toggleIcon = document.getElementById("togglePasswordIcon");
+
+  if (toggleBtn) {
+    toggleBtn.addEventListener("click", () => {
+      const isHidden = pwInput.type === "password";
+      pwInput.type   = isHidden ? "text" : "password";
+      toggleIcon.className = isHidden ? "bi bi-eye-slash" : "bi bi-eye";
+    });
+  }
+</script>
+{% endblock %}

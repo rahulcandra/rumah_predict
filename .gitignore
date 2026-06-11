@@ -1,0 +1,53 @@
+# ──────────────────────────────────
+#  Veltrix – .gitignore
+# ──────────────────────────────────
+
+# Virtual environment
+venv/
+env/
+.venv/
+.env/
+
+# Environment variables
+.env
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+
+# SQLite database files
+*.db
+*.sqlite
+*.sqlite3
+instance/
+
+# Flask-Migrate (keep migrations folder but ignore cache)
+migrations/__pycache__/
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+*.egg
+
+# IDE / editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Logs
+*.log

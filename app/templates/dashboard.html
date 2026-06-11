@@ -1,0 +1,269 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+{% block meta_description %}Dashboard RumahPredict – Informasi model prediksi harga rumah dan analitik dataset properti.{% endblock %}
+
+{% block content %}
+<section class="vx-dashboard py-5">
+  <div class="container">
+
+    <!-- Welcome Banner -->
+    <div class="vx-dashboard-banner mb-5 vx-animate-fade-in-up">
+      <div class="row align-items-center gy-3">
+        <div class="col-auto">
+          <div class="vx-avatar">
+            {{ (current_user.username | first | default('U')) | upper }}
+          </div>
+        </div>
+        <div class="col">
+          <p class="vx-dashboard-greeting mb-0">PANEL PENGGUNA</p>
+          <h1 class="vx-dashboard-username mb-0">{{ current_user.username }}</h1>
+        </div>
+        <div class="col-auto d-flex align-items-center gap-3">
+          <p class="text-muted small mb-0">
+            <i class="bi bi-calendar3 me-1"></i>{{ current_date }}
+          </p>
+          <a href="{{ url_for('main.test_model') }}" class="btn vx-btn-primary btn-sm d-flex align-items-center gap-2">
+            <i class="bi bi-calculator"></i> Prediksi Harga
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stat Cards -->
+    <div class="row g-4 mb-5">
+      <div class="col-sm-6 col-xl-3">
+        <div class="vx-stat-card">
+          <div class="vx-stat-icon vx-text-primary"><i class="bi bi-house-fill"></i></div>
+          <div class="vx-stat-label">Model Aktif</div>
+          <div class="vx-stat-value vx-text-blue">1 Model</div>
+        </div>
+      </div>
+      <div class="col-sm-6 col-xl-3">
+        <div class="vx-stat-card">
+          <div class="vx-stat-icon" style="color:var(--vx-accent);"><i class="bi bi-speedometer2"></i></div>
+          <div class="vx-stat-label">Status Model</div>
+          <div class="vx-stat-value text-success">Online ✓</div>
+        </div>
+      </div>
+      <div class="col-sm-6 col-xl-3">
+        <div class="vx-stat-card">
+          <div class="vx-stat-icon text-success"><i class="bi bi-graph-up-arrow"></i></div>
+          <div class="vx-stat-label">R² Score</div>
+          <div class="vx-stat-value" style="color:#7c3aed;">0.9210</div>
+        </div>
+      </div>
+      <div class="col-sm-6 col-xl-3">
+        <div class="vx-stat-card">
+          <div class="vx-stat-icon text-warning"><i class="bi bi-database-check"></i></div>
+          <div class="vx-stat-label">Ukuran Dataset</div>
+          <div class="vx-stat-value text-dark">12.500 Baris</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Model Info + Metrics -->
+    <div class="row g-4 mb-5">
+
+      <!-- Info Model -->
+      <div class="col-lg-6">
+        <div class="vx-card h-100">
+          <div class="vx-card-header d-flex align-items-center gap-2">
+            <i class="bi bi-info-circle-fill vx-text-primary"></i>
+            Informasi Model
+          </div>
+          <div class="vx-card-body">
+            <table class="vx-model-info-table w-100">
+              <tbody>
+                <tr>
+                  <td class="vx-info-label"><i class="bi bi-tag me-2 vx-text-primary"></i>Nama Model</td>
+                  <td class="vx-info-value">House Price Prediction Model</td>
+                </tr>
+                <tr>
+                  <td class="vx-info-label"><i class="bi bi-bookmark me-2" style="color:var(--vx-accent);"></i>Versi</td>
+                  <td class="vx-info-value"><span class="vx-version-badge">v1.0.0</span></td>
+                </tr>
+                <tr>
+                  <td class="vx-info-label"><i class="bi bi-diagram-3 me-2 text-success"></i>Algoritma</td>
+                  <td class="vx-info-value">Random Forest Regressor</td>
+                </tr>
+                <tr>
+                  <td class="vx-info-label"><i class="bi bi-calendar-check me-2 text-warning"></i>Tanggal Training</td>
+                  <td class="vx-info-value">2025-06-01</td>
+                </tr>
+                <tr>
+                  <td class="vx-info-label"><i class="bi bi-table me-2 text-info"></i>Ukuran Dataset</td>
+                  <td class="vx-info-value">12.500 baris × 10 kolom</td>
+                </tr>
+                <tr>
+                  <td class="vx-info-label"><i class="bi bi-bullseye me-2 vx-text-primary"></i>Target</td>
+                  <td class="vx-info-value">Harga Rumah (Regresi)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Metrik Performa -->
+      <div class="col-lg-6">
+        <div class="vx-card h-100">
+          <div class="vx-card-header d-flex align-items-center gap-2">
+            <i class="bi bi-bar-chart-fill" style="color:var(--vx-accent);"></i>
+            Metrik Performa
+          </div>
+          <div class="vx-card-body">
+            <p class="text-muted small mb-4">Evaluasi pada data uji (20% dari total dataset).</p>
+
+            <!-- MAE -->
+            <div class="vx-metric-row mb-4">
+              <div class="d-flex justify-content-between align-items-baseline mb-1">
+                <span class="vx-metric-label">
+                  <i class="bi bi-arrows-expand-vertical me-2 text-danger"></i>
+                  Mean Absolute Error <span class="text-muted">(MAE)</span>
+                </span>
+                <span class="vx-metric-value text-danger">Rp 85 Jt</span>
+              </div>
+              <div class="vx-metric-bar-track">
+                <div class="vx-metric-bar vx-bar-danger" style="width:55%;"></div>
+              </div>
+              <p class="vx-metric-hint">Rata-rata selisih prediksi vs harga aktual</p>
+            </div>
+
+            <!-- RMSE -->
+            <div class="vx-metric-row mb-4">
+              <div class="d-flex justify-content-between align-items-baseline mb-1">
+                <span class="vx-metric-label">
+                  <i class="bi bi-reception-4 me-2 text-warning"></i>
+                  Root Mean Sq. Error <span class="text-muted">(RMSE)</span>
+                </span>
+                <span class="vx-metric-value text-warning">Rp 132 Jt</span>
+              </div>
+              <div class="vx-metric-bar-track">
+                <div class="vx-metric-bar vx-bar-warning" style="width:68%;"></div>
+              </div>
+              <p class="vx-metric-hint">Penalti lebih besar untuk error yang besar</p>
+            </div>
+
+            <!-- R² -->
+            <div class="vx-metric-row">
+              <div class="d-flex justify-content-between align-items-baseline mb-1">
+                <span class="vx-metric-label">
+                  <i class="bi bi-graph-up-arrow me-2 text-success"></i>
+                  R² Score <span class="text-muted">(Koefisien Determinasi)</span>
+                </span>
+                <span class="vx-metric-value text-success">0.9210</span>
+              </div>
+              <div class="vx-metric-bar-track">
+                <div class="vx-metric-bar vx-bar-success" style="width:92.1%;"></div>
+              </div>
+              <p class="vx-metric-hint">92.1% variansi harga berhasil dijelaskan — Sangat Baik</p>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Analitik Data -->
+    <div class="row g-4 mb-5">
+      <div class="col-12">
+        <div class="vx-section-divider mb-1">
+          <i class="bi bi-bar-chart-line-fill me-2 vx-text-primary"></i>
+          <span>Analitik Dataset</span>
+        </div>
+        <p class="text-muted small mb-0">Visualisasi dari dataset properti yang digunakan untuk melatih model.</p>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="vx-card h-100">
+          <div class="vx-card-header d-flex align-items-center gap-2">
+            <i class="bi bi-currency-dollar vx-text-primary"></i>
+            Distribusi Harga Rumah
+          </div>
+          <div class="vx-card-body p-0">
+            <div class="vx-chart-container">
+              <img src="{{ url_for('static', filename='img/price_distribution.png') }}"
+                   alt="Distribusi Harga Rumah" class="vx-chart-img" />
+            </div>
+            <div class="vx-chart-caption">
+              <i class="bi bi-info-circle me-1"></i>
+              Distribusi harga dari 12.500 data properti dalam dataset.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="vx-card h-100">
+          <div class="vx-card-header d-flex align-items-center gap-2">
+            <i class="bi bi-stars" style="color:var(--vx-accent);"></i>
+            Feature Importance
+          </div>
+          <div class="vx-card-body p-0">
+            <div class="vx-chart-container">
+              <img src="{{ url_for('static', filename='img/feature_importance.png') }}"
+                   alt="Feature Importance" class="vx-chart-img" />
+            </div>
+            <div class="vx-chart-caption">
+              <i class="bi bi-info-circle me-1"></i>
+              Fitur yang paling berpengaruh terhadap prediksi harga rumah.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row g-4">
+      <div class="col-12">
+        <div class="vx-card">
+          <div class="vx-card-header d-flex align-items-center gap-2">
+            <i class="bi bi-lightning-fill text-warning"></i>
+            Aksi Cepat
+          </div>
+          <div class="vx-card-body">
+            <div class="row g-3">
+              <div class="col-sm-6 col-md-4">
+                <a href="{{ url_for('main.test_model') }}" class="vx-action-tile">
+                  <div class="vx-action-icon vx-icon-blue">
+                    <i class="bi bi-calculator"></i>
+                  </div>
+                  <div>
+                    <div class="vx-action-title">Prediksi Harga</div>
+                    <div class="vx-action-sub">Hitung estimasi harga rumah sekarang</div>
+                  </div>
+                </a>
+              </div>
+              <div class="col-sm-6 col-md-4">
+                <a href="{{ url_for('main.dashboard') }}" class="vx-action-tile">
+                  <div class="vx-action-icon vx-icon-green">
+                    <i class="bi bi-arrow-clockwise"></i>
+                  </div>
+                  <div>
+                    <div class="vx-action-title">Refresh Dashboard</div>
+                    <div class="vx-action-sub">Muat ulang status & metrik model</div>
+                  </div>
+                </a>
+              </div>
+              <div class="col-sm-6 col-md-4">
+                <a href="{{ url_for('main.landing') }}" class="vx-action-tile">
+                  <div class="vx-action-icon vx-icon-orange">
+                    <i class="bi bi-house-door"></i>
+                  </div>
+                  <div>
+                    <div class="vx-action-title">Halaman Utama</div>
+                    <div class="vx-action-sub">Kembali ke beranda RumahPredict</div>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+{% endblock %}

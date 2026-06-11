@@ -1,0 +1,283 @@
+{% extends "base.html" %}
+
+{% block title %}Beranda{% endblock %}
+{% block meta_description %}RumahPredict – Prediksi harga rumah secara akurat menggunakan Random Forest Machine Learning. Masukkan spesifikasi rumah dan dapatkan estimasi harga instan.{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<section class="vx-hero d-flex align-items-center" id="hero">
+  <div class="container pb-5 pt-0">
+    <div class="row align-items-center gy-5">
+
+      <!-- Teks Kiri -->
+      <div class="col-lg-6 text-center text-lg-start">
+
+        <div class="d-inline-flex align-items-center gap-2 mb-4 px-3 py-1 rounded-pill vx-animate-scale-in"
+             style="background:#dbeafe; border:1px solid var(--vx-border);">
+          <i class="bi bi-stars" style="color:var(--vx-primary);"></i>
+          <span style="font-size:.82rem; font-weight:600; color:var(--vx-primary);">Didukung oleh Random Forest ML</span>
+        </div>
+
+        <h1 class="vx-hero-title mb-4 vx-animate-fade-in-up vx-delay-100">
+          Prediksi Harga Rumah<br class="d-none d-md-block" />
+          <span style="color:var(--vx-primary);">Akurat & Instan.</span>
+        </h1>
+
+        <p class="vx-hero-subtitle mb-5 vx-animate-fade-in-up vx-delay-200">
+          Masukkan spesifikasi rumah — luas tanah, jumlah kamar, lokasi — dan dapatkan
+          <strong>estimasi harga pasar</strong> secara real-time berdasarkan model Machine Learning
+          yang dilatih dari 12.500 data properti aktual Indonesia.
+        </p>
+
+        <div class="d-flex flex-wrap gap-3 justify-content-center justify-content-lg-start mb-5 vx-animate-fade-in-up vx-delay-300">
+          {% if current_user.is_authenticated %}
+            <a href="{{ url_for('main.test_model') }}" class="btn vx-btn-primary btn-lg px-4">
+              <i class="bi bi-calculator me-2"></i>Mulai Prediksi
+            </a>
+            <a href="{{ url_for('main.dashboard') }}" class="btn vx-btn-outline-accent btn-lg px-4">
+              <i class="bi bi-grid-1x2 me-2"></i>Dashboard
+            </a>
+          {% else %}
+            <a href="{{ url_for('auth.register') }}" class="btn vx-btn-primary btn-lg px-4">
+              <i class="bi bi-rocket-takeoff me-2"></i>Coba Gratis
+            </a>
+            <a href="{{ url_for('auth.login') }}" class="btn vx-btn-outline-accent btn-lg px-4">
+              <i class="bi bi-box-arrow-in-right me-2"></i>Masuk
+            </a>
+          {% endif %}
+        </div>
+
+        <div class="vx-hero-tags justify-content-center justify-content-lg-start vx-animate-fade-in-up vx-delay-400">
+          <span class="vx-hero-tag"><i class="bi bi-house-door" style="color:var(--vx-primary);"></i> Data Properti Real</span>
+          <span class="vx-hero-tag"><i class="bi bi-cpu" style="color:var(--vx-accent);"></i> Random Forest</span>
+          <span class="vx-hero-tag"><i class="bi bi-graph-up" style="color:#059669;"></i> R² ≥ 0.92</span>
+          <span class="vx-hero-tag"><i class="bi bi-shield-check" style="color:#f59e0b;"></i> Aman & Privat</span>
+        </div>
+      </div>
+
+      <!-- Kartu Ilustrasi -->
+      <div class="col-lg-6 d-none d-lg-block">
+        <div class="vx-house-card vx-animate-fade-in-right vx-delay-200">
+          <div class="vx-house-card-header">
+            <span class="vx-dot vx-dot-red"></span>
+            <span class="vx-dot vx-dot-yellow"></span>
+            <span class="vx-dot vx-dot-green"></span>
+            <span class="ms-3">Estimasi Harga Properti — Real-time</span>
+          </div>
+          <div class="vx-house-stat-grid">
+            <div class="vx-house-stat-item">
+              <div class="vx-house-stat-label"><i class="bi bi-aspect-ratio me-1"></i> Luas Tanah</div>
+              <div class="vx-house-stat-value">200 m²</div>
+            </div>
+            <div class="vx-house-stat-item">
+              <div class="vx-house-stat-label"><i class="bi bi-house me-1"></i> Luas Bangunan</div>
+              <div class="vx-house-stat-value">150 m²</div>
+            </div>
+            <div class="vx-house-stat-item">
+              <div class="vx-house-stat-label"><i class="bi bi-door-open me-1"></i> Kamar Tidur</div>
+              <div class="vx-house-stat-value">3 Kamar</div>
+            </div>
+            <div class="vx-house-stat-item">
+              <div class="vx-house-stat-label"><i class="bi bi-droplet me-1"></i> Kamar Mandi</div>
+              <div class="vx-house-stat-value">2 Kamar</div>
+            </div>
+            <div class="vx-house-stat-item">
+              <div class="vx-house-stat-label"><i class="bi bi-geo-alt me-1"></i> Lokasi</div>
+              <div class="vx-house-stat-value">Jakarta Selatan</div>
+            </div>
+            <div class="vx-house-stat-item">
+              <div class="vx-house-stat-label"><i class="bi bi-car-front me-1"></i> Garasi</div>
+              <div class="vx-house-stat-value">1 Mobil</div>
+            </div>
+          </div>
+          <div class="vx-house-price-banner">
+            <div>
+              <div class="vx-house-price-label">Estimasi Harga Pasar</div>
+              <div class="vx-house-price-value">Rp 2.45 Miliar</div>
+            </div>
+            <i class="bi bi-check-circle-fill" style="color:#4ade80; font-size:2rem;"></i>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- PIPELINE ML -->
+<section class="vx-pipeline py-7" id="pipeline">
+  <div class="container">
+    <div class="text-center mb-6">
+      <h2 class="vx-section-title mb-3">Alur Analisis Machine Learning</h2>
+      <p class="vx-section-sub">
+        Dari data mentah hingga prediksi real-time — proses saintifik yang transparan dan terstruktur.
+      </p>
+    </div>
+
+    <div class="row g-4">
+
+      <div class="col-md-6 col-xl-4">
+        <div class="vx-pipeline-step">
+          <div class="vx-step-num">1</div>
+          <div class="vx-feature-icon vx-icon-blue mb-2 mt-3"><i class="bi bi-database"></i></div>
+          <div class="vx-step-title">Data Understanding</div>
+          <p class="vx-step-text">
+            Dataset berisi <strong>12.500 data properti</strong> dengan 9 fitur: luas tanah, luas bangunan,
+            kamar tidur, kamar mandi, garasi, lantai, lokasi (20 kota), kondisi, dan sertifikat.
+            Target: harga rumah (regresi).
+          </p>
+          <span class="vx-step-badge" style="background:#dbeafe; color:#1d4ed8;">Supervised Learning</span>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-xl-4">
+        <div class="vx-pipeline-step">
+          <div class="vx-step-num">2</div>
+          <div class="vx-feature-icon vx-icon-purple mb-2 mt-3"><i class="bi bi-funnel"></i></div>
+          <div class="vx-step-title">Preprocessing</div>
+          <p class="vx-step-text">
+            Fitur numerik distandardisasi dengan <code>StandardScaler</code>. Fitur kategorikal
+            (Lokasi, Kondisi, Sertifikat) dienkode dengan <code>OneHotEncoder</code>. 
+            Split data: 80% training, 20% testing.
+          </p>
+          <span class="vx-step-badge" style="background:#ede9fe; color:#6d28d9;">Pipeline sklearn</span>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-xl-4">
+        <div class="vx-pipeline-step">
+          <div class="vx-step-num">3</div>
+          <div class="vx-feature-icon vx-icon-green mb-2 mt-3"><i class="bi bi-diagram-3"></i></div>
+          <div class="vx-step-title">Pemodelan — Random Forest</div>
+          <p class="vx-step-text">
+            Algoritma <strong>Random Forest Regressor</strong> dengan 200 pohon keputusan, max_depth=20,
+            min_samples_leaf=3. Ensemble method ini unggul untuk data dengan fitur non-linear dan
+            nilai outlier.
+          </p>
+          <span class="vx-step-badge" style="background:#d1fae5; color:#065f46;">200 Decision Trees</span>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-xl-4">
+        <div class="vx-pipeline-step">
+          <div class="vx-step-num">4</div>
+          <div class="vx-feature-icon vx-icon-orange mb-2 mt-3"><i class="bi bi-bar-chart"></i></div>
+          <div class="vx-step-title">Evaluasi Model</div>
+          <p class="vx-step-text">
+            Model dievaluasi dengan MAE, RMSE, dan R² Score pada data test.
+            <strong>R² = 0.9288</strong> menunjukkan 92.88% variansi harga berhasil
+            dijelaskan oleh model — performa sangat baik.
+          </p>
+          <span class="vx-step-badge" style="background:#fef3c7; color:#92400e;">R² = 0.9288</span>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-xl-4">
+        <div class="vx-pipeline-step">
+          <div class="vx-step-num">5</div>
+          <div class="vx-feature-icon vx-icon-sky mb-2 mt-3"><i class="bi bi-speedometer2"></i></div>
+          <div class="vx-step-title">Dashboard Analitik</div>
+          <p class="vx-step-text">
+            Visualisasi interaktif: distribusi harga, feature importance, grafik aktual vs prediksi,
+            dan harga median per kota — semua tersaji dalam dashboard yang bersih dan informatif.
+          </p>
+          <span class="vx-step-badge" style="background:#e0f2fe; color:#0369a1;">4 Chart Interaktif</span>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-xl-4">
+        <div class="vx-pipeline-step">
+          <div class="vx-step-num">6</div>
+          <div class="vx-feature-icon vx-icon-pink mb-2 mt-3"><i class="bi bi-lightning-charge"></i></div>
+          <div class="vx-step-title">Prediksi Real-time</div>
+          <p class="vx-step-text">
+            Input spesifikasi properti melalui form web, model Flask memanggil pipeline secara
+            langsung dan mengembalikan estimasi harga dalam <strong>milidetik</strong>
+            tanpa reload halaman.
+          </p>
+          <span class="vx-step-badge" style="background:#fce7f3; color:#9d174d;">Live Inference</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- FEATURES -->
+<section class="vx-features py-7" id="fitur">
+  <div class="container">
+    <div class="text-center mb-6">
+      <h2 class="vx-section-title mb-3">Mengapa RumahPredict?</h2>
+      <p class="vx-section-sub">
+        Teknologi Machine Learning modern untuk membantu Anda membuat keputusan properti yang lebih cerdas.
+      </p>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-md-6 col-lg-4">
+        <div class="vx-feature-card h-100">
+          <div class="vx-feature-icon vx-icon-blue"><i class="bi bi-house-fill"></i></div>
+          <h5 class="vx-feature-title">Data Properti Indonesia</h5>
+          <p class="vx-feature-text">Dataset 12.500 properti dari 20 kota di Indonesia dengan fitur lengkap — relevan untuk kondisi pasar properti domestik.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4">
+        <div class="vx-feature-card h-100">
+          <div class="vx-feature-icon vx-icon-purple"><i class="bi bi-cpu-fill"></i></div>
+          <h5 class="vx-feature-title">Random Forest Regressor</h5>
+          <p class="vx-feature-text">200 pohon keputusan yang bekerja secara ensemble. Akurat, robust terhadap outlier, dan memberikan feature importance yang bermakna.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4">
+        <div class="vx-feature-card h-100">
+          <div class="vx-feature-icon vx-icon-green"><i class="bi bi-lightning-charge-fill"></i></div>
+          <h5 class="vx-feature-title">Prediksi Real-time</h5>
+          <p class="vx-feature-text">Estimasi harga instan dalam hitungan milidetik. Pipeline ML langsung terintegrasi ke backend Flask untuk respons yang cepat.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4">
+        <div class="vx-feature-card h-100">
+          <div class="vx-feature-icon vx-icon-orange"><i class="bi bi-bar-chart-fill"></i></div>
+          <h5 class="vx-feature-title">Dashboard Analitik</h5>
+          <p class="vx-feature-text">4 visualisasi data: distribusi harga, feature importance, aktual vs prediksi, dan perbandingan harga per kota di seluruh Indonesia.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4">
+        <div class="vx-feature-card h-100">
+          <div class="vx-feature-icon vx-icon-pink"><i class="bi bi-geo-alt-fill"></i></div>
+          <h5 class="vx-feature-title">20 Kota Indonesia</h5>
+          <p class="vx-feature-text">Dari Jakarta, Bali, Surabaya, hingga Batam. Model mempertimbangkan multiplier lokasi yang mencerminkan dinamika harga properti per kota.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4">
+        <div class="vx-feature-card h-100">
+          <div class="vx-feature-icon vx-icon-teal"><i class="bi bi-shield-lock-fill"></i></div>
+          <h5 class="vx-feature-title">Autentikasi Penuh</h5>
+          <p class="vx-feature-text">Akses model dilindungi sistem login berbasis Flask-Login. Data pengguna aman dan tidak pernah dibagikan ke pihak ketiga.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- CTA -->
+{% if not current_user.is_authenticated %}
+<section class="vx-cta py-7">
+  <div class="container text-center">
+    <div class="vx-cta-card mx-auto">
+      <h2 class="mb-3">Siap mengetahui harga rumah impian Anda?</h2>
+      <p class="mb-4">Daftar gratis dan mulai prediksi dalam kurang dari 2 menit.</p>
+      <a href="{{ url_for('auth.register') }}" class="btn btn-lg px-5">
+        <i class="bi bi-rocket-takeoff me-2"></i>Mulai Sekarang — Gratis
+      </a>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% endblock %}

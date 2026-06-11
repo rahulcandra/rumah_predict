@@ -1,0 +1,13 @@
+Flask==3.0.3
+Flask-SQLAlchemy==3.1.1
+Flask-Login==0.6.3
+Flask-Migrate==4.0.7
+python-dotenv==1.0.1
+Werkzeug==3.0.3
+email-validator==2.1.1
+
+# ML dependencies (version locked to ensure compatibility with the trained model)
+numpy==1.26.4
+pandas==2.2.2
+scikit-learn==1.6.1
+joblib==1.4.2

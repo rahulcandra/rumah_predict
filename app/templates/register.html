@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+
+{% block title %}Create Account{% endblock %}
+{% block meta_description %}Create your free Veltrix developer account and deploy Machine Learning models instantly.{% endblock %}
+
+{% block content %}
+<section class="vx-auth-section d-flex align-items-center py-5">
+  <div class="container position-relative z-1">
+    <div class="row justify-content-center">
+      <div class="col-sm-10 col-md-8 col-lg-5 col-xl-4">
+
+        <!-- Card -->
+        <div class="vx-auth-card vx-animate-fade-in-up">
+
+          <!-- Header -->
+          <div class="vx-auth-card-header text-center mb-4">
+            <a href="{{ url_for('main.landing') }}" class="d-inline-flex flex-column align-items-center gap-2 mb-3">
+              <img src="{{ url_for('static', filename='img/logo_rumah.png') }}" alt="Veltrix Logo" class="vx-auth-logo" style="max-height: 48px;" />
+              <img src="{{ url_for('static', filename='img/logo_rumah_2.png') }}" alt="Veltrix Name" style="max-height: 20px;" />
+            </a>
+            <h1 class="h5 vx-auth-title mt-2">Create Account</h1>
+            <p class="text-muted small">Deploy and manage your models immediately</p>
+          </div>
+
+          <!-- Register form -->
+          <form method="POST" action="{{ url_for('auth.register') }}" novalidate id="registerForm">
+
+            <!-- Username -->
+            <div class="mb-3">
+              <label for="username" class="form-label vx-form-label">Username</label>
+              <div class="input-group vx-input-group">
+                <span class="input-group-text vx-input-icon">
+                  <i class="bi bi-person"></i>
+                </span>
+                <input
+                  type="text"
+                  class="form-control vx-input"
+                  id="username"
+                  name="username"
+                  placeholder="developer_name"
+                  autocomplete="username"
+                  minlength="3"
+                  required
+                />
+              </div>
+              <div class="form-text vx-form-hint">Minimum 3 characters.</div>
+            </div>
+
+            <!-- Email -->
+            <div class="mb-3">
+              <label for="email" class="form-label vx-form-label">Email address</label>
+              <div class="input-group vx-input-group">
+                <span class="input-group-text vx-input-icon">
+                  <i class="bi bi-envelope"></i>
+                </span>
+                <input
+                  type="email"
+                  class="form-control vx-input"
+                  id="email"
+                  name="email"
+                  placeholder="developer@example.com"
+                  autocomplete="email"
+                  required
+                />
+              </div>
+            </div>
+
+            <!-- Password -->
+            <div class="mb-3">
+              <label for="password" class="form-label vx-form-label">Password</label>
+              <div class="input-group vx-input-group">
+                <span class="input-group-text vx-input-icon">
+                  <i class="bi bi-lock"></i>
+                </span>
+                <input
+                  type="password"
+                  class="form-control vx-input"
+                  id="password"
+                  name="password"
+                  placeholder="••••••••"
+                  autocomplete="new-password"
+                  minlength="6"
+                  required
+                />
+                <button
+                  class="btn vx-input-icon vx-toggle-pw"
+                  type="button"
+                  id="togglePassword"
+                  title="Show / hide password"
+                >
+                  <i class="bi bi-eye" id="togglePasswordIcon"></i>
+                </button>
+              </div>
+              <div class="form-text vx-form-hint">Minimum 6 characters.</div>
+            </div>
+
+            <!-- Confirm Password -->
+            <div class="mb-4">
+              <label for="confirm_password" class="form-label vx-form-label">Confirm Password</label>
+              <div class="input-group vx-input-group">
+                <span class="input-group-text vx-input-icon">
+                  <i class="bi bi-lock-fill"></i>
+                </span>
+                <input
+                  type="password"
+                  class="form-control vx-input"
+                  id="confirm_password"
+                  name="confirm_password"
+                  placeholder="••••••••"
+                  autocomplete="new-password"
+                  required
+                />
+              </div>
+              <!-- Live match indicator -->
+              <div class="form-text vx-form-hint" id="passwordMatchMsg"></div>
+            </div>
+
+            <!-- Submit -->
+            <button type="submit" class="btn vx-btn-primary w-100 py-2" id="registerBtn">
+              <i class="bi bi-person-plus me-2"></i>Create Deployment Account
+            </button>
+
+          </form><!-- /form -->
+
+          <!-- Footer -->
+          <p class="text-center text-muted small mt-4 mb-0">
+            Already registered?
+            <a href="{{ url_for('auth.login') }}" class="vx-link">Sign in</a>
+          </p>
+
+        </div><!-- /vx-auth-card -->
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  // -- Toggle password visibility ---------------------------------
+  const toggleBtn  = document.getElementById("togglePassword");
+  const pwInput    = document.getElementById("password");
+  const toggleIcon = document.getElementById("togglePasswordIcon");
+
+  if (toggleBtn) {
+    toggleBtn.addEventListener("click", () => {
+      const isHidden = pwInput.type === "password";
+      pwInput.type   = isHidden ? "text" : "password";
+      toggleIcon.className = isHidden ? "bi bi-eye-slash" : "bi bi-eye";
+    });
+  }
+
+  // -- Live password match indicator -----------------------------
+  const confirmInput = document.getElementById("confirm_password");
+  const matchMsg     = document.getElementById("passwordMatchMsg");
+  const registerBtn  = document.getElementById("registerBtn");
+
+  function checkMatch() {
+    if (!confirmInput.value) {
+      matchMsg.textContent = "";
+      matchMsg.className   = "form-text vx-form-hint";
+      return;
+    }
+    if (pwInput.value === confirmInput.value) {
+      matchMsg.textContent = "✓ Passwords match";
+      matchMsg.className   = "form-text text-success";
+    } else {
+      matchMsg.textContent = "✗ Passwords do not match";
+      matchMsg.className   = "form-text text-danger";
+    }
+  }
+
+  if (confirmInput) {
+    confirmInput.addEventListener("input", checkMatch);
+    pwInput.addEventListener("input", checkMatch);
+  }
+</script>
+{% endblock %}
