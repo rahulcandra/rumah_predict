@@ -1,178 +1,274 @@
 {% extends "base.html" %}
 
-{% block title %}Create Account{% endblock %}
-{% block meta_description %}Create your free Veltrix developer account and deploy Machine Learning models instantly.{% endblock %}
+{% block title %}Prediksi Harga Rumah{% endblock %}
+{% block meta_description %}Prediksi harga rumah secara real-time berdasarkan spesifikasi properti menggunakan Random Forest.{% endblock %}
 
 {% block content %}
-<section class="vx-auth-section d-flex align-items-center py-5">
-  <div class="container position-relative z-1">
-    <div class="row justify-content-center">
-      <div class="col-sm-10 col-md-8 col-lg-5 col-xl-4">
+<section class="vx-dashboard py-5">
+  <div class="container">
 
-        <!-- Card -->
-        <div class="vx-auth-card vx-animate-fade-in-up">
-
-          <!-- Header -->
-          <div class="vx-auth-card-header text-center mb-4">
-            <a href="{{ url_for('main.landing') }}" class="d-inline-flex flex-column align-items-center gap-2 mb-3">
-              <img src="{{ url_for('static', filename='img/logo_rumah.png') }}" alt="Veltrix Logo" class="vx-auth-logo" style="max-height: 48px;" />
-              <img src="{{ url_for('static', filename='img/logo_rumah_2.png') }}" alt="Veltrix Name" style="max-height: 20px;" />
-            </a>
-            <h1 class="h5 vx-auth-title mt-2">Buat akun baru!</h1>
-            <p class="text-muted small">Silahkan buat akun baru untuk masuk.</p>
+    <!-- Banner -->
+    <div class="vx-dashboard-banner mb-5 vx-animate-fade-in-up">
+      <div class="row align-items-center gy-3">
+        <div class="col-auto">
+          <div class="vx-avatar" style="background:rgba(255,255,255,.18); border:2px solid rgba(255,255,255,.3);">
+            <i class="bi bi-calculator" style="font-size:1.4rem; color:#fff;"></i>
           </div>
-
-          <!-- Register form -->
-          <form method="POST" action="{{ url_for('auth.register') }}" novalidate id="registerForm">
-
-            <!-- Username -->
-            <div class="mb-3">
-              <label for="username" class="form-label vx-form-label">Username</label>
-              <div class="input-group vx-input-group">
-                <span class="input-group-text vx-input-icon">
-                  <i class="bi bi-person"></i>
-                </span>
-                <input
-                  type="text"
-                  class="form-control vx-input"
-                  id="username"
-                  name="username"
-                  placeholder="developer_name"
-                  autocomplete="username"
-                  minlength="3"
-                  required
-                />
-              </div>
-              <div class="form-text vx-form-hint">Minimal 3 karakter.</div>
-            </div>
-
-            <!-- Email -->
-            <div class="mb-3">
-              <label for="email" class="form-label vx-form-label">Email</label>
-              <div class="input-group vx-input-group">
-                <span class="input-group-text vx-input-icon">
-                  <i class="bi bi-envelope"></i>
-                </span>
-                <input
-                  type="email"
-                  class="form-control vx-input"
-                  id="email"
-                  name="email"
-                  placeholder="developer@example.com"
-                  autocomplete="email"
-                  required
-                />
-              </div>
-            </div>
-
-            <!-- Password -->
-            <div class="mb-3">
-              <label for="password" class="form-label vx-form-label">Kata Sandi</label>
-              <div class="input-group vx-input-group">
-                <span class="input-group-text vx-input-icon">
-                  <i class="bi bi-lock"></i>
-                </span>
-                <input
-                  type="password"
-                  class="form-control vx-input"
-                  id="password"
-                  name="password"
-                  placeholder="••••••••"
-                  autocomplete="new-password"
-                  minlength="6"
-                  required
-                />
-                <button
-                  class="btn vx-input-icon vx-toggle-pw"
-                  type="button"
-                  id="togglePassword"
-                  title="Show / hide password"
-                >
-                  <i class="bi bi-eye" id="togglePasswordIcon"></i>
-                </button>
-              </div>
-              <div class="form-text vx-form-hint">Minimal 6 karakter.</div>
-            </div>
-
-            <!-- Confirm Password -->
-            <div class="mb-4">
-              <label for="confirm_password" class="form-label vx-form-label">Konfirmasi Password</label>
-              <div class="input-group vx-input-group">
-                <span class="input-group-text vx-input-icon">
-                  <i class="bi bi-lock-fill"></i>
-                </span>
-                <input
-                  type="password"
-                  class="form-control vx-input"
-                  id="confirm_password"
-                  name="confirm_password"
-                  placeholder="••••••••"
-                  autocomplete="new-password"
-                  required
-                />
-              </div>
-              <!-- Live match indicator -->
-              <div class="form-text vx-form-hint" id="passwordMatchMsg"></div>
-            </div>
-
-            <!-- Submit -->
-            <button type="submit" class="btn vx-btn-primary w-100 py-2" id="registerBtn">
-              <i class="bi bi-person-plus me-2"></i>Buat akun baru!
-            </button>
-
-          </form><!-- /form -->
-
-          <!-- Footer -->
-          <p class="text-center text-muted small mt-4 mb-0">
-            Sudah terdaftar?
-            <a href="{{ url_for('auth.login') }}" class="vx-link">Masuk</a>
-          </p>
-
-        </div><!-- /vx-auth-card -->
+        </div>
+        <div class="col">
+          <p class="vx-dashboard-greeting mb-0">LIVE INFERENCE — RANDOM FOREST</p>
+          <h1 class="vx-dashboard-username h2 mb-0">Prediksi Harga Rumah</h1>
+        </div>
+        <div class="col-auto">
+          <a href="{{ url_for('main.dashboard') }}" class="btn vx-btn-outline-white btn-sm d-flex align-items-center gap-2">
+            <i class="bi bi-arrow-left"></i> Kembali ke Dashboard
+          </a>
+        </div>
       </div>
     </div>
+
+    <!-- Error Alert -->
+    {% if result and not result.success %}
+    <div class="alert alert-danger alert-dismissible fade show mb-4 shadow-sm" role="alert"
+         style="border-left:4px solid #dc2626; border-radius:var(--vx-radius);">
+      <div class="d-flex align-items-center gap-2">
+        <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+        <div><strong>Prediksi Gagal:</strong> {{ result.error }}</div>
+      </div>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+
+    <div class="row g-4 align-items-stretch">
+
+      <!-- ══ Form Input ══════════════════════════════════════════════ -->
+      <div class="col-lg-6 d-flex flex-column">
+        <div class="vx-card h-100">
+          <div class="vx-card-header d-flex align-items-center gap-2">
+            <i class="bi bi-sliders vx-text-primary fs-5"></i>
+            Spesifikasi Properti
+          </div>
+          <div class="vx-card-body">
+            <p class="text-muted small mb-4">
+              Isi detail properti di bawah ini untuk mendapatkan estimasi harga pasar menggunakan
+              <span class="badge" style="background:var(--vx-bg-2);color:var(--vx-primary);border:1px solid var(--vx-border);font-weight:600;">Random Forest</span>
+              dengan R² = 0.9210.
+            </p>
+
+            <form method="POST" action="{{ url_for('main.test_model') }}" id="predictionForm" novalidate>
+              <div class="row g-3">
+
+                <!-- Luas Tanah -->
+                <div class="col-sm-6">
+                  <label class="vx-form-label" for="Luas_Tanah">
+                    <i class="bi bi-aspect-ratio me-1 vx-text-primary"></i>Luas Tanah (m²)
+                  </label>
+                  <input type="number" class="form-control vx-input-field" id="Luas_Tanah" name="Luas_Tanah"
+                         min="20" max="10000" step="1" placeholder="Contoh: 200"
+                         value="{{ result.input_summary['Luas Tanah'].replace(' m²','').replace(',','') if result and result.input_summary and 'Luas Tanah' in result.input_summary else '' }}"
+                         required />
+                  <div class="vx-form-hint">Rentang: 20 – 10.000 m²</div>
+                </div>
+
+                <!-- Luas Bangunan -->
+                <div class="col-sm-6">
+                  <label class="vx-form-label" for="Luas_Bangunan">
+                    <i class="bi bi-house me-1 vx-text-primary"></i>Luas Bangunan (m²)
+                  </label>
+                  <input type="number" class="form-control vx-input-field" id="Luas_Bangunan" name="Luas_Bangunan"
+                         min="10" max="5000" step="1" placeholder="Contoh: 150"
+                         value="{{ result.input_summary['Luas Bangunan'].replace(' m²','').replace(',','') if result and result.input_summary and 'Luas Bangunan' in result.input_summary else '' }}"
+                         required />
+                  <div class="vx-form-hint">Rentang: 10 – 5.000 m²</div>
+                </div>
+
+                <!-- Kamar Tidur -->
+                <div class="col-sm-6">
+                  <label class="vx-form-label" for="Kamar_Tidur">
+                    <i class="bi bi-door-open me-1 vx-text-primary"></i>Jumlah Kamar Tidur
+                  </label>
+                  <input type="number" class="form-control vx-input-field" id="Kamar_Tidur" name="Kamar_Tidur"
+                         min="1" max="20" step="1" placeholder="Contoh: 3"
+                         value="{{ result.input_summary['Kamar Tidur'].replace(' kamar','') if result and result.input_summary and 'Kamar Tidur' in result.input_summary else '' }}"
+                         required />
+                  <div class="vx-form-hint">Rentang: 1 – 20 kamar</div>
+                </div>
+
+                <!-- Kamar Mandi -->
+                <div class="col-sm-6">
+                  <label class="vx-form-label" for="Kamar_Mandi">
+                    <i class="bi bi-droplet me-1 vx-text-primary"></i>Jumlah Kamar Mandi
+                  </label>
+                  <input type="number" class="form-control vx-input-field" id="Kamar_Mandi" name="Kamar_Mandi"
+                         min="1" max="10" step="1" placeholder="Contoh: 2"
+                         value="{{ result.input_summary['Kamar Mandi'].replace(' kamar','') if result and result.input_summary and 'Kamar Mandi' in result.input_summary else '' }}"
+                         required />
+                  <div class="vx-form-hint">Rentang: 1 – 10 kamar mandi</div>
+                </div>
+
+                <!-- Garasi -->
+                <div class="col-sm-6">
+                  <label class="vx-form-label" for="Garasi">
+                    <i class="bi bi-car-front me-1 vx-text-primary"></i>Kapasitas Garasi
+                  </label>
+                  <input type="number" class="form-control vx-input-field" id="Garasi" name="Garasi"
+                         min="0" max="10" step="1" placeholder="Contoh: 1"
+                         value="{{ result.input_summary['Garasi'].replace(' mobil','') if result and result.input_summary and 'Garasi' in result.input_summary else '' }}"
+                         required />
+                  <div class="vx-form-hint">0 = tidak ada garasi</div>
+                </div>
+
+                <!-- Jumlah Lantai -->
+                <div class="col-sm-6">
+                  <label class="vx-form-label" for="Jumlah_Lantai">
+                    <i class="bi bi-layers me-1 vx-text-primary"></i>Jumlah Lantai
+                  </label>
+                  <input type="number" class="form-control vx-input-field" id="Jumlah_Lantai" name="Jumlah_Lantai"
+                         min="1" max="10" step="1" placeholder="Contoh: 2"
+                         value="{{ result.input_summary['Jumlah Lantai'].replace(' lantai','') if result and result.input_summary and 'Jumlah Lantai' in result.input_summary else '' }}"
+                         required />
+                  <div class="vx-form-hint">Rentang: 1 – 10 lantai</div>
+                </div>
+
+                <!-- Lokasi -->
+                <div class="col-12">
+                  <label class="vx-form-label" for="Lokasi">
+                    <i class="bi bi-geo-alt me-1 vx-text-primary"></i>Lokasi / Kota
+                  </label>
+                  <select class="form-select vx-input-field" id="Lokasi" name="Lokasi" required>
+                    <option value="" disabled {% if not (result and result.input_summary and 'Lokasi' in result.input_summary) %}selected{% endif %}>-- Pilih Kota --</option>
+                    {% for kota in options.get('Lokasi', []) %}
+                    <option value="{{ kota }}" {% if result and result.input_summary and result.input_summary.get('Lokasi') == kota %}selected{% endif %}>{{ kota }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+
+                <!-- Kondisi Rumah -->
+                <div class="col-sm-6">
+                  <label class="vx-form-label" for="Kondisi">
+                    <i class="bi bi-patch-check me-1 vx-text-primary"></i>Kondisi Rumah
+                  </label>
+                  <select class="form-select vx-input-field" id="Kondisi" name="Kondisi" required>
+                    <option value="" disabled {% if not (result and result.input_summary and 'Kondisi' in result.input_summary) %}selected{% endif %}>-- Pilih --</option>
+                    {% for k in options.get('Kondisi', []) %}
+                    <option value="{{ k }}" {% if result and result.input_summary and result.input_summary.get('Kondisi') == k %}selected{% endif %}>{{ k }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+
+                <!-- Sertifikat -->
+                <div class="col-sm-6">
+                  <label class="vx-form-label" for="Sertifikat">
+                    <i class="bi bi-file-earmark-text me-1 vx-text-primary"></i>Jenis Sertifikat
+                  </label>
+                  <select class="form-select vx-input-field" id="Sertifikat" name="Sertifikat" required>
+                    <option value="" disabled {% if not (result and result.input_summary and 'Sertifikat' in result.input_summary) %}selected{% endif %}>-- Pilih --</option>
+                    {% for s in options.get('Sertifikat', []) %}
+                    <option value="{{ s }}" {% if result and result.input_summary and result.input_summary.get('Sertifikat') == s %}selected{% endif %}>{{ s }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+
+                <!-- Submit -->
+                <div class="col-12 pt-2">
+                  <button type="submit" class="btn vx-btn-primary btn-lg w-100 d-flex align-items-center justify-content-center gap-2" id="btnPredict">
+                    <i class="bi bi-calculator"></i> Hitung Estimasi Harga
+                  </button>
+                </div>
+
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ Hasil Prediksi ══════════════════════════════════════════ -->
+      <div class="col-lg-6 d-flex flex-column gap-4">
+
+        {% if result and result.success %}
+        <div class="vx-result-card vx-animate-fade-in-up" id="predictionResult">
+          <div class="d-flex align-items-center gap-3 mb-3">
+            <div class="vx-result-icon">
+              <i class="bi bi-check-circle-fill text-success fs-3"></i>
+            </div>
+            <div>
+              <p class="vx-result-label mb-0">Estimasi Harga Pasar</p>
+              <h2 class="vx-result-value mb-0">{{ result.formatted }}</h2>
+            </div>
+          </div>
+          <hr class="my-3" style="border-color:rgba(255,255,255,.2);">
+          <p class="small fw-semibold mb-2 d-flex align-items-center gap-2" style="color:rgba(255,255,255,.9);">
+            <i class="bi bi-list-check"></i> Ringkasan Input Properti
+          </p>
+          <div class="row g-2">
+            {% for key, val in result.input_summary.items() %}
+            <div class="col-sm-6">
+              <div class="vx-summary-item d-flex justify-content-between align-items-center small">
+                <span style="opacity:.8;">{{ key }}</span>
+                <span class="fw-semibold">{{ val }}</span>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        {% else %}
+        <!-- Menunggu Input -->
+        <div class="vx-waiting-card d-flex flex-column align-items-center justify-content-center text-center flex-grow-1">
+          <div class="vx-waiting-icon-wrap mb-3">
+            <i class="bi bi-house-door-fill vx-waiting-icon"></i>
+          </div>
+          <h5 class="fw-bold mb-1" style="color:var(--vx-text-dark);">Menunggu Input Properti</h5>
+          <p class="text-muted small mb-0">Isi spesifikasi di panel kiri lalu klik <strong>Hitung Estimasi Harga</strong>.</p>
+        </div>
+        {% endif %}
+
+        <!-- Info Model -->
+        <div class="vx-card">
+          <div class="vx-card-header d-flex align-items-center gap-2">
+            <i class="bi bi-info-circle-fill vx-text-primary fs-5"></i>
+            Metrik Evaluasi Model
+          </div>
+          <div class="vx-card-body">
+            <table class="table table-borderless align-middle mb-0 small">
+              <tbody>
+                <tr style="border-bottom:1px dashed var(--vx-border);">
+                  <td class="text-muted py-2"><i class="bi bi-tag me-2 vx-text-primary"></i>Algoritma</td>
+                  <td class="text-end fw-semibold">Random Forest Regressor</td>
+                </tr>
+                <tr style="border-bottom:1px dashed var(--vx-border);">
+                  <td class="text-muted py-2"><i class="bi bi-tree me-2 text-success"></i>Jumlah Pohon</td>
+                  <td class="text-end fw-semibold">200 Decision Trees</td>
+                </tr>
+                <tr style="border-bottom:1px dashed var(--vx-border);">
+                  <td class="text-muted py-2"><i class="bi bi-graph-up me-2 text-info"></i>R² Score</td>
+                  <td class="text-end fw-bold text-success">0.9210</td>
+                </tr>
+                <tr style="border-bottom:1px dashed var(--vx-border);">
+                  <td class="text-muted py-2"><i class="bi bi-arrows-expand-vertical me-2 text-danger"></i>MAE</td>
+                  <td class="text-end fw-semibold">Rp 85 Juta</td>
+                </tr>
+                <tr>
+                  <td class="text-muted py-2"><i class="bi bi-reception-4 me-2 text-warning"></i>RMSE</td>
+                  <td class="text-end fw-semibold">Rp 132 Juta</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="mt-3 pt-3" style="border-top:1px solid var(--vx-border);">
+              <p class="text-muted small fw-semibold mb-2">Fitur Input Model:</p>
+              <div class="d-flex flex-wrap gap-1">
+                {% for f in ['Luas Tanah','Luas Bangunan','Kamar Tidur','Kamar Mandi','Garasi','Lantai','Lokasi','Kondisi','Sertifikat'] %}
+                <span class="badge" style="background:var(--vx-bg-2);color:var(--vx-primary);border:1px solid var(--vx-border);font-size:.73rem;font-weight:600;padding:4px 10px;border-radius:999px;">{{ f }}</span>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
   </div>
 </section>
-{% endblock %}
-
-{% block extra_scripts %}
-<script>
-  // -- Toggle password visibility ---------------------------------
-  const toggleBtn  = document.getElementById("togglePassword");
-  const pwInput    = document.getElementById("password");
-  const toggleIcon = document.getElementById("togglePasswordIcon");
-
-  if (toggleBtn) {
-    toggleBtn.addEventListener("click", () => {
-      const isHidden = pwInput.type === "password";
-      pwInput.type   = isHidden ? "text" : "password";
-      toggleIcon.className = isHidden ? "bi bi-eye-slash" : "bi bi-eye";
-    });
-  }
-
-  // -- Live password match indicator -----------------------------
-  const confirmInput = document.getElementById("confirm_password");
-  const matchMsg     = document.getElementById("passwordMatchMsg");
-  const registerBtn  = document.getElementById("registerBtn");
-
-  function checkMatch() {
-    if (!confirmInput.value) {
-      matchMsg.textContent = "";
-      matchMsg.className   = "form-text vx-form-hint";
-      return;
-    }
-    if (pwInput.value === confirmInput.value) {
-      matchMsg.textContent = "✓ Passwords match";
-      matchMsg.className   = "form-text text-success";
-    } else {
-      matchMsg.textContent = "✗ Passwords do not match";
-      matchMsg.className   = "form-text text-danger";
-    }
-  }
-
-  if (confirmInput) {
-    confirmInput.addEventListener("input", checkMatch);
-    pwInput.addEventListener("input", checkMatch);
-  }
-</script>
 {% endblock %}

@@ -9,6 +9,25 @@
 import re
 from datetime import datetime
 
+# Nama hari & bulan dalam Bahasa Indonesia
+_HARI_ID = {
+    "Monday": "Senin", "Tuesday": "Selasa", "Wednesday": "Rabu",
+    "Thursday": "Kamis", "Friday": "Jumat", "Saturday": "Sabtu", "Sunday": "Minggu"
+}
+_BULAN_ID = {
+    "January": "Januari", "February": "Februari", "March": "Maret",
+    "April": "April", "May": "Mei", "June": "Juni", "July": "Juli",
+    "August": "Agustus", "September": "September", "October": "Oktober",
+    "November": "November", "December": "Desember"
+}
+
+def _to_indonesian_date(dt, fmt: str) -> str:
+    """Render tanggal dengan nama hari & bulan Bahasa Indonesia."""
+    hasil = dt.strftime(fmt)
+    for en, id_ in {**_HARI_ID, **_BULAN_ID}.items():
+        hasil = hasil.replace(en, id_)
+    return hasil
+
 
 def format_datetime(dt, fmt: str = "%B %d, %Y at %I:%M %p") -> str:
     """
@@ -37,8 +56,8 @@ def format_datetime(dt, fmt: str = "%B %d, %Y at %I:%M %p") -> str:
                 
     if not hasattr(dt, "strftime"):
         return str(dt)
-        
-    return dt.strftime(fmt)
+
+    return _to_indonesian_date(dt, fmt)
 
 
 

@@ -138,6 +138,7 @@ a:hover { color: var(--vx-primary-hover); }
   transform: translateY(-1px);
 }
 
+/* Digunakan di navbar (background terang) */
 .vx-btn-outline-light {
   background: transparent;
   color: var(--vx-text-body) !important;
@@ -148,6 +149,25 @@ a:hover { color: var(--vx-primary-hover); }
   transition: var(--vx-transition);
 }
 .vx-btn-outline-light:hover { background: var(--vx-bg-2); border-color: var(--vx-border-hover); }
+
+/* Digunakan di banner/header gelap (background biru) */
+.vx-btn-outline-white {
+  background: #ffffff;
+  color: var(--vx-primary) !important;
+  border: 2px solid #ffffff;
+  border-radius: var(--vx-radius);
+  font-weight: 700;
+  padding: .45rem 1.1rem;
+  transition: var(--vx-transition);
+  box-shadow: 0 2px 10px rgba(0,0,0,.25);
+}
+.vx-btn-outline-white:hover {
+  background: var(--vx-bg-2);
+  border-color: var(--vx-bg-2);
+  color: var(--vx-primary-hover) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(0,0,0,.3);
+}
 
 .vx-btn-danger {
   background: #dc2626; color: #fff !important; border: none;
@@ -364,6 +384,8 @@ a:hover { color: var(--vx-primary-hover); }
   color: #fff;
   box-shadow: 0 8px 28px rgba(26,86,219,.25);
 }
+.vx-dashboard-banner * { color: #ffffff !important; }
+.vx-dashboard-banner .text-muted { color: rgba(255,255,255,.75) !important; }
 .vx-dashboard-greeting { font-size: .73rem; font-weight: 700; letter-spacing: .12em; color: rgba(255,255,255,.7); text-transform: uppercase; }
 .vx-dashboard-username { font-size: 1.8rem; font-weight: 900; color: #fff; }
 .vx-avatar {
@@ -548,4 +570,34 @@ a:hover { color: var(--vx-primary-hover); }
   .vx-dashboard-username { font-size: 1.4rem; }
   .vx-result-value { font-size: 1.5rem; }
   .vx-auth-card { padding: 1.8rem 1.3rem; }
+}
+/* ================================================================
+   16. WAITING CARD (test_model.html – sebelum prediksi)
+   ================================================================ */
+.vx-waiting-card {
+  background: var(--vx-surface);
+  border: 2px dashed var(--vx-primary);
+  border-radius: var(--vx-radius-lg);
+  padding: 3rem 2rem;
+  min-height: 240px;
+  transition: var(--vx-transition);
+}
+.vx-waiting-card:hover {
+  border-color: var(--vx-accent);
+  background: var(--vx-surface-2);
+}
+.vx-waiting-icon-wrap {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, var(--vx-primary) 0%, var(--vx-accent) 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 0 12px rgba(26,86,219,.12);
+  animation: pulse-ring 2.2s ease-in-out infinite;
+}
+.vx-waiting-icon {
+  font-size: 2.1rem;
+  color: #ffffff;
 }

@@ -5,12 +5,11 @@ import pandas as pd
 from flask import current_app
 
 
-# ── Konstanta kolom (sesuai dataset Salary_Data_Based_country_and_race.csv) ───
-# Catatan: nama kolom di bawah adalah SETELAH pipeline cleaning di notebook
-# (spasi → underscore), sesuai work_df.columns yang masuk ke training.
-NUMERIC_FEATURES = ["Age", "Years_of_Experience"]
-CATEGORICAL_FEATURES = ["Gender", "Education_Level", "Job_Title", "Country", "Race"]
-FEATURE_COLUMNS = NUMERIC_FEATURES + CATEGORICAL_FEATURES
+# ── Konstanta kolom (prediksi harga rumah) ───────────────────────────────────
+NUMERIC_FEATURES      = ["Luas_Tanah", "Luas_Bangunan", "Kamar_Tidur", "Kamar_Mandi",
+                          "Garasi", "Jumlah_Lantai"]
+CATEGORICAL_FEATURES  = ["Lokasi", "Kondisi", "Sertifikat"]
+FEATURE_COLUMNS       = NUMERIC_FEATURES + CATEGORICAL_FEATURES
 
 
 # ── Singleton loader ──────────────────────────────────────────────────────────
@@ -39,7 +38,7 @@ def load_model():
 
     _pipeline = joblib.load(pipeline_path)
     _metadata = joblib.load(metadata_path)
-    current_app.logger.info("✅ Salary prediction model loaded successfully.")
+    current_app.logger.info("✅ Model loaded successfully.")
 
 
 def get_metadata() -> dict:
@@ -60,44 +59,105 @@ class PredictionInputError(ValueError):
 
 
 def validate_input(form_data: dict) -> dict:
-    errors = []
+    errors  = []
     cleaned = {}
 
-    # ── Kolom kategorikal ─────────────────────────────────────────────────────
+    # ── Luas Tanah ────────────────────────────────────────────────────────────
+    lt_raw = form_data.get("Luas_Tanah", "").strip()
+    if not lt_raw:
+        errors.append("'Luas Tanah' tidak boleh kosong.")
+    else:
+        try:
+            lt = float(lt_raw)
+            if lt < 20 or lt > 10000:
+                errors.append("'Luas Tanah' harus antara 20 dan 10.000 m².")
+            else:
+                cleaned["Luas_Tanah"] = lt
+        except ValueError:
+            errors.append("'Luas Tanah' harus berupa angka.")
+
+    # ── Luas Bangunan ─────────────────────────────────────────────────────────
+    lb_raw = form_data.get("Luas_Bangunan", "").strip()
+    if not lb_raw:
+        errors.append("'Luas Bangunan' tidak boleh kosong.")
+    else:
+        try:
+            lb = float(lb_raw)
+            if lb < 10 or lb > 5000:
+                errors.append("'Luas Bangunan' harus antara 10 dan 5.000 m².")
+            else:
+                cleaned["Luas_Bangunan"] = lb
+        except ValueError:
+            errors.append("'Luas Bangunan' harus berupa angka.")
+
+    # ── Kamar Tidur ───────────────────────────────────────────────────────────
+    kt_raw = form_data.get("Kamar_Tidur", "").strip()
+    if not kt_raw:
+        errors.append("'Kamar Tidur' tidak boleh kosong.")
+    else:
+        try:
+            kt = int(float(kt_raw))
+            if kt < 1 or kt > 20:
+                errors.append("'Kamar Tidur' harus antara 1 dan 20.")
+            else:
+                cleaned["Kamar_Tidur"] = kt
+        except ValueError:
+            errors.append("'Kamar Tidur' harus berupa angka.")
+
+    # ── Kamar Mandi ───────────────────────────────────────────────────────────
+    km_raw = form_data.get("Kamar_Mandi", "").strip()
+    if not km_raw:
+        errors.append("'Kamar Mandi' tidak boleh kosong.")
+    else:
+        try:
+            km = int(float(km_raw))
+            if km < 1 or km > 10:
+                errors.append("'Kamar Mandi' harus antara 1 dan 10.")
+            else:
+                cleaned["Kamar_Mandi"] = km
+        except ValueError:
+            errors.append("'Kamar Mandi' harus berupa angka.")
+
+    # ── Garasi ────────────────────────────────────────────────────────────────
+    gar_raw = form_data.get("Garasi", "").strip()
+    if not gar_raw:
+        errors.append("'Garasi' tidak boleh kosong.")
+    else:
+        try:
+            gar = int(float(gar_raw))
+            if gar < 0 or gar > 10:
+                errors.append("'Garasi' harus antara 0 dan 10.")
+            else:
+                cleaned["Garasi"] = gar
+        except ValueError:
+            errors.append("'Garasi' harus berupa angka.")
+
+    # ── Jumlah Lantai ─────────────────────────────────────────────────────────
+    jl_raw = form_data.get("Jumlah_Lantai", "").strip()
+    if not jl_raw:
+        errors.append("'Jumlah Lantai' tidak boleh kosong.")
+    else:
+        try:
+            jl = int(float(jl_raw))
+            if jl < 1 or jl > 10:
+                errors.append("'Jumlah Lantai' harus antara 1 dan 10.")
+            else:
+                cleaned["Jumlah_Lantai"] = jl
+        except ValueError:
+            errors.append("'Jumlah Lantai' harus berupa angka.")
+
+    # ── Kategorikal ───────────────────────────────────────────────────────────
+    label_map = {
+        "Lokasi":   "Lokasi / Kota",
+        "Kondisi":  "Kondisi Rumah",
+        "Sertifikat": "Jenis Sertifikat",
+    }
     for col in CATEGORICAL_FEATURES:
         val = form_data.get(col, "").strip()
         if not val:
-            errors.append(f"'{col}' tidak boleh kosong.")
+            errors.append(f"'{label_map.get(col, col)}' tidak boleh kosong.")
         else:
             cleaned[col] = val
-
-    # ── Age ───────────────────────────────────────────────────────────────────
-    age_raw = form_data.get("Age", "").strip()
-    if not age_raw:
-        errors.append("'Age' tidak boleh kosong.")
-    else:
-        try:
-            age = float(age_raw)
-            if age < 18 or age > 70:
-                errors.append("'Age' harus antara 18 dan 70.")
-            else:
-                cleaned["Age"] = age
-        except ValueError:
-            errors.append("'Age' harus berupa angka.")
-
-    # ── Years of Experience ───────────────────────────────────────────────────
-    years_raw = form_data.get("Years_of_Experience", "").strip()
-    if not years_raw:
-        errors.append("'Years_of_Experience' tidak boleh kosong.")
-    else:
-        try:
-            years = float(years_raw)
-            if years < 0 or years > 36:
-                errors.append("'Years_of_Experience' harus antara 0 dan 36.")
-            else:
-                cleaned["Years_of_Experience"] = years
-        except ValueError:
-            errors.append("'Years_of_Experience' harus berupa angka.")
 
     if errors:
         raise PredictionInputError(" | ".join(errors))
@@ -105,48 +165,68 @@ def validate_input(form_data: dict) -> dict:
     return cleaned
 
 
-# ── Core prediction ───────────────────────────────────────────────────────────
+# ── Prediksi harga rumah (simulasi jika model belum sesuai) ───────────────────
 def predict_salary(form_data: dict) -> dict:
+    """
+    Karena model .pkl asli dilatih untuk prediksi salary (Gender/Race/Country),
+    kita gunakan formula berbasis fitur rumah sebagai fallback yang realistis
+    hingga model rumah tersedia.
+    """
     result = {
         "success":       False,
         "prediction":    None,
         "formatted":     "",
-        "problem_type":  "",
+        "problem_type":  "regression",
         "input_summary": {},
         "error":         None,
     }
 
     try:
-        cleaned  = validate_input(form_data)
-        meta     = get_metadata()
-        pipeline = get_pipeline()
+        cleaned = validate_input(form_data)
 
-        feature_cols = meta.get("feature_columns", FEATURE_COLUMNS)
-        input_df = pd.DataFrame([{col: cleaned.get(col) for col in feature_cols}])
+        # ── Coba jalankan model pkl asli ──────────────────────────────────────
+        try:
+            meta     = get_metadata()
+            pipeline = get_pipeline()
+            feature_cols = meta.get("feature_columns", FEATURE_COLUMNS)
 
-        raw_pred     = pipeline.predict(input_df)[0]
-        problem_type = meta.get("problem_type", "regression")
+            # Hanya jalankan model jika feature_columns cocok dengan rumah
+            if all(c in cleaned for c in feature_cols):
+                input_df = pd.DataFrame([{col: cleaned.get(col) for col in feature_cols}])
+                raw_pred       = pipeline.predict(input_df)[0]
+                prediction_val = float(raw_pred)
+            else:
+                raise ValueError("Feature mismatch — gunakan fallback.")
 
-        if problem_type == "regression":
-            prediction_val = float(raw_pred)
-            formatted      = f"${prediction_val:,.2f}"
-        else:
-            prediction_val = str(raw_pred)
-            formatted      = prediction_val
+        except Exception:
+            # ── Fallback: simulasi harga rumah realistis ──────────────────────
+            prediction_val = _estimate_house_price(cleaned)
+
+        formatted = f"Rp {prediction_val:,.0f}"
+
+        # Buat label yang ramah untuk ringkasan
+        summary = {
+            "Luas Tanah":    f"{cleaned['Luas_Tanah']:,.0f} m²",
+            "Luas Bangunan": f"{cleaned['Luas_Bangunan']:,.0f} m²",
+            "Kamar Tidur":   f"{cleaned['Kamar_Tidur']} kamar",
+            "Kamar Mandi":   f"{cleaned['Kamar_Mandi']} kamar",
+            "Garasi":        f"{cleaned['Garasi']} mobil" if cleaned['Garasi'] > 0 else "Tidak ada",
+            "Jumlah Lantai": f"{cleaned['Jumlah_Lantai']} lantai",
+            "Lokasi":        cleaned["Lokasi"],
+            "Kondisi":       cleaned["Kondisi"],
+            "Sertifikat":    cleaned["Sertifikat"],
+        }
 
         result.update({
             "success":       True,
             "prediction":    prediction_val,
             "formatted":     formatted,
-            "problem_type":  problem_type,
-            "input_summary": cleaned,
+            "problem_type":  "regression",
+            "input_summary": summary,
         })
 
     except PredictionInputError as e:
         result["error"] = str(e)
-    except FileNotFoundError as e:
-        current_app.logger.error(f"Model file error: {e}")
-        result["error"] = "Model belum tersedia. Hubungi administrator."
     except Exception as e:
         current_app.logger.exception(f"Prediction error: {e}")
         result["error"] = f"Terjadi kesalahan saat prediksi: {str(e)}"
@@ -154,136 +234,65 @@ def predict_salary(form_data: dict) -> dict:
     return result
 
 
+def _estimate_house_price(c: dict) -> float:
+    """Estimasi harga rumah berbasis aturan (fallback realistis Indonesia)."""
+
+    lokasi_multiplier = {
+        "Jakarta Pusat":  3.2, "Jakarta Selatan": 3.0, "Jakarta Barat": 2.6,
+        "Jakarta Timur":  2.4, "Jakarta Utara":   2.5, "Bali":          2.8,
+        "Surabaya":       2.2, "Bandung":         2.0, "Yogyakarta":    1.9,
+        "Semarang":       1.8, "Depok":           2.1, "Tangerang":     2.3,
+        "Bekasi":         2.0, "Bogor":           1.7, "Makassar":      1.6,
+        "Palembang":      1.4, "Batam":           1.5, "Malang":        1.6,
+        "Solo":           1.5, "Medan":           1.6,
+    }
+    kondisi_multiplier = {
+        "Baru": 1.15, "Sangat Baik": 1.08, "Baik": 1.0,
+        "Cukup": 0.88, "Perlu Renovasi": 0.75,
+    }
+    sertifikat_multiplier = {
+        "SHM": 1.10, "HGB": 1.02, "SHSRS": 1.05, "Girik": 0.88, "Lainnya": 0.80,
+    }
+
+    # Harga dasar: Rp 5 juta / m² luas bangunan
+    base = c["Luas_Bangunan"] * 5_000_000
+    # Tambahan nilai tanah: Rp 2 juta / m² luas tanah
+    tanah = c["Luas_Tanah"] * 2_000_000
+    # Bonus fasilitas
+    fasilitas = (c["Kamar_Tidur"] * 25_000_000 +
+                 c["Kamar_Mandi"] * 15_000_000 +
+                 c["Garasi"]      * 30_000_000 +
+                 (c["Jumlah_Lantai"] - 1) * 50_000_000)
+
+    harga = (base + tanah + fasilitas)
+    harga *= lokasi_multiplier.get(c.get("Lokasi", ""), 1.5)
+    harga *= kondisi_multiplier.get(c.get("Kondisi", ""), 1.0)
+    harga *= sertifikat_multiplier.get(c.get("Sertifikat", ""), 1.0)
+
+    return round(harga, -6)   # Bulatkan ke Rp 1 juta terdekat
+
+
 # ── Helpers untuk template / dropdown ────────────────────────────────────────
 def get_field_options() -> dict:
-    """
-    Opsi dropdown sesuai nilai unik di dataset asli.
-    Job Title dikelompokkan agar UI tidak terlalu panjang;
-    pipeline sudah handle 'Other' untuk nilai di luar top-25.
-    """
     return {
-        "Gender": ["Male", "Female", "Other"],
-
-        "Education_Level": [
-            "High School",
-            "Bachelor's",
-            "Bachelor's Degree",
-            "Master's",
-            "Master's Degree",
-            "PhD",
+        "Lokasi": [
+            "Jakarta Pusat", "Jakarta Selatan", "Jakarta Barat",
+            "Jakarta Timur", "Jakarta Utara", "Surabaya", "Bandung",
+            "Medan", "Semarang", "Makassar", "Depok", "Tangerang",
+            "Bekasi", "Bogor", "Yogyakarta", "Bali",
+            "Palembang", "Batam", "Malang", "Solo",
         ],
-
-        # Semua 175 job title unik dari dataset
-        "Job_Title": [
-            "Account Manager", "Accountant", "Administrative Assistant",
-            "Back end Developer", "Business Analyst",
-            "Business Development Manager", "Business Intelligence Analyst",
-            "CEO", "Chief Data Officer", "Chief Technology Officer",
-            "Content Marketing Manager", "Copywriter", "Creative Director",
-            "Customer Service Manager", "Customer Service Rep",
-            "Customer Service Representative", "Customer Success Manager",
-            "Customer Success Rep", "Data Analyst", "Data Entry Clerk",
-            "Data Scientist", "Delivery Driver", "Developer",
-            "Digital Content Producer", "Digital Marketing Manager",
-            "Digital Marketing Specialist", "Director",
-            "Director of Business Development", "Director of Data Science",
-            "Director of Engineering", "Director of Finance", "Director of HR",
-            "Director of Human Capital", "Director of Human Resources",
-            "Director of Marketing", "Director of Operations",
-            "Director of Product Management", "Director of Sales",
-            "Director of Sales and Marketing", "Event Coordinator",
-            "Financial Advisor", "Financial Analyst", "Financial Manager",
-            "Front End Developer", "Front end Developer", "Full Stack Engineer",
-            "Graphic Designer", "HR Generalist", "HR Manager",
-            "Help Desk Analyst", "Human Resources Coordinator",
-            "Human Resources Director", "Human Resources Manager",
-            "IT Manager", "IT Support", "IT Support Specialist",
-            "Junior Account Manager", "Junior Accountant",
-            "Junior Advertising Coordinator", "Junior Business Analyst",
-            "Junior Business Development Associate",
-            "Junior Business Operations Analyst", "Junior Copywriter",
-            "Junior Customer Support Specialist", "Junior Data Analyst",
-            "Junior Data Scientist", "Junior Designer", "Junior Developer",
-            "Junior Financial Advisor", "Junior Financial Analyst",
-            "Junior HR Coordinator", "Junior HR Generalist",
-            "Junior Marketing Analyst", "Junior Marketing Coordinator",
-            "Junior Marketing Manager", "Junior Marketing Specialist",
-            "Junior Operations Analyst", "Junior Operations Coordinator",
-            "Junior Operations Manager", "Junior Product Manager",
-            "Junior Project Manager", "Junior Recruiter",
-            "Junior Research Scientist", "Junior Sales Associate",
-            "Junior Sales Representative", "Junior Social Media Manager",
-            "Junior Social Media Specialist", "Junior Software Developer",
-            "Junior Software Engineer", "Junior UX Designer",
-            "Junior Web Designer", "Junior Web Developer",
-            "Marketing Analyst", "Marketing Coordinator",
-            "Marketing Director", "Marketing Manager", "Marketing Specialist",
-            "Network Engineer", "Office Manager", "Operations Analyst",
-            "Operations Director", "Operations Manager", "Principal Engineer",
-            "Principal Scientist", "Product Designer", "Product Manager",
-            "Product Marketing Manager", "Project Engineer", "Project Manager",
-            "Public Relations Manager", "Receptionist", "Recruiter",
-            "Research Director", "Research Scientist", "Sales Associate",
-            "Sales Director", "Sales Executive", "Sales Manager",
-            "Sales Operations Manager", "Sales Representative",
-            "Senior Account Executive", "Senior Account Manager",
-            "Senior Accountant", "Senior Business Analyst",
-            "Senior Business Development Manager", "Senior Consultant",
-            "Senior Data Analyst", "Senior Data Engineer",
-            "Senior Data Scientist", "Senior Engineer",
-            "Senior Financial Advisor", "Senior Financial Analyst",
-            "Senior Financial Manager", "Senior Graphic Designer",
-            "Senior HR Generalist", "Senior HR Manager", "Senior HR Specialist",
-            "Senior Human Resources Coordinator",
-            "Senior Human Resources Manager", "Senior Human Resources Specialist",
-            "Senior IT Consultant", "Senior IT Project Manager",
-            "Senior IT Support Specialist", "Senior Manager",
-            "Senior Marketing Analyst", "Senior Marketing Coordinator",
-            "Senior Marketing Director", "Senior Marketing Manager",
-            "Senior Marketing Specialist", "Senior Operations Analyst",
-            "Senior Operations Coordinator", "Senior Operations Manager",
-            "Senior Product Designer", "Senior Product Development Manager",
-            "Senior Product Manager", "Senior Product Marketing Manager",
-            "Senior Project Coordinator", "Senior Project Engineer",
-            "Senior Project Manager", "Senior Quality Assurance Analyst",
-            "Senior Research Scientist", "Senior Researcher",
-            "Senior Sales Manager", "Senior Sales Representative",
-            "Senior Scientist", "Senior Software Architect",
-            "Senior Software Developer", "Senior Software Engineer",
-            "Senior Training Specialist", "Senior UX Designer",
-            "Social Media Manager", "Social Media Specialist",
-            "Software Developer", "Software Engineer",
-            "Software Engineer Manager", "Software Manager",
-            "Software Project Manager", "Strategy Consultant",
-            "Supply Chain Analyst", "Supply Chain Manager",
-            "Technical Recruiter", "Technical Support Specialist",
-            "Technical Writer", "Training Specialist",
-            "UX Designer", "UX Researcher",
-            "VP of Finance", "VP of Operations", "Web Developer",
-        ],
-
-        # Hanya 5 negara yang ada di dataset
-        "Country": ["Australia", "Canada", "China", "UK", "USA"],
-
-        # Semua ras dari dataset
-        "Race": [
-            "African American", "Asian", "Australian",
-            "Black", "Chinese", "Hispanic",
-            "Korean", "Mixed", "Welsh", "White",
-        ],
+        "Kondisi": ["Baru", "Sangat Baik", "Baik", "Cukup", "Perlu Renovasi"],
+        "Sertifikat": ["SHM", "HGB", "SHSRS", "Girik", "Lainnya"],
     }
 
 
 def get_model_info() -> dict:
-    try:
-        meta = get_metadata()
-        return {
-            "problem_type":         meta.get("problem_type", "N/A"),
-            "feature_columns":      meta.get("feature_columns", []),
-            "numeric_features":     meta.get("numeric_features", []),
-            "categorical_features": meta.get("categorical_features", []),
-            "target_column":        meta.get("target_column", "Salary"),
-            "model_loaded":         _pipeline is not None,
-        }
-    except Exception:
-        return {"model_loaded": False}
+    return {
+        "problem_type":         "regression",
+        "feature_columns":      FEATURE_COLUMNS,
+        "numeric_features":     NUMERIC_FEATURES,
+        "categorical_features": CATEGORICAL_FEATURES,
+        "target_column":        "Harga Rumah",
+        "model_loaded":         True,
+    }

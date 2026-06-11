@@ -112,7 +112,7 @@ def login():
 
         # -- Log the user in ---------------------------------------
         login_user(user, remember=remember)
-        flash(f"Welcome back, {user.username}!", "success")
+        flash(f" Selamat datang kembali, {user.username}!", "success")
 
         # Redirect to the page the user originally tried to visit
         next_page = request.args.get("next")

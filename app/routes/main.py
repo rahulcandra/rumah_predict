@@ -40,7 +40,7 @@ def dashboard():
     Protected dashboard page – model overview, metrics & analytics.
     """
     joined       = format_datetime(current_user.created_at)
-    current_date = format_datetime(datetime.now(timezone.utc), fmt="%A, %B %d %Y")
+    current_date = format_datetime(datetime.now(timezone.utc), fmt="%A, %d %B %Y")
 
     options = get_field_options()
     info    = get_model_info()
